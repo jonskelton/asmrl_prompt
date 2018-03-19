@@ -1,0 +1,7 @@
+[package]
+name = "asmrl_prompt"
+version = "0.1.0"
+authors = ["Jon M. Skelton <jskelton@berkeley.edu>"]
+
+[dependencies]
+chrono = "0.4"
