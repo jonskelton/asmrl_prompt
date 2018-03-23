@@ -4,35 +4,40 @@ use std::env;
 use std::process;
 use chrono::prelude::*;
 
-fn expire_time_repr(datestamp: String) -> String {
-    let expire_time;
-    let local: DateTime<Local> = Local::now();
-    print!(" from {}", local);
+fn role_expiration_repr(datestamp: String) -> String {
+    let role_expiration;
+    let current_time: DateTime<Local> = Local::now();
 
-    match DateTime::parse_from_rfc3339(&datestamp) {
-        Ok(value) => expire_time = value,
+    match datestamp.parse::<DateTime<Local>>() {
+        Ok(value) => role_expiration = value,
         Err(_e) => return datestamp,
     }
 
-    //let local_utc: DateTime<Utc> = local.with_timezone(&Utc);
-    //if expire_time < local_utc {
-    //    return "EXPIRED";
-    //}
+    if role_expiration < current_time {
+        return String::from("EXPIRED");
+    }
 
-    return expire_time.to_string();
+    return role_expiration.format("%H:%M").to_string()
 }
 
 fn main() {
-    let role_assumed;
+    let mut role_alias;
     let role_assumed_until;
 
     match env::var("ROLE_ASSUMED") {
-        Ok(value) => role_assumed = value,
+        Ok(value) => role_alias = value,
         Err(_e) => process::exit(0),
     }
+
+    match env::var("ROLE_ALIAS") {
+        Ok(value) => role_alias = value,
+        Err(_e) => (),
+    }
+
     match env::var("ROLE_ASSUMED_UNTIL") {
         Ok(value) => role_assumed_until = value,
         Err(_e) => process::exit(0),
     }
-    println!("Hello, {} until {}", role_assumed, expire_time_repr(role_assumed_until));
+
+    println!("{} until {}", role_alias, role_expiration_repr(role_assumed_until));
 }
