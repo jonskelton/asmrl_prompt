@@ -24,6 +24,11 @@ fn main() {
     let mut role_alias;
     let role_assumed_until;
 
+    match env::var("ROLE_ASSUMED_UNTIL") {
+        Ok(value) => role_assumed_until = value,
+        Err(_e) => process::exit(0),
+    }
+
     match env::var("ROLE_ASSUMED") {
         Ok(value) => role_alias = value,
         Err(_e) => process::exit(0),
@@ -32,11 +37,6 @@ fn main() {
     match env::var("ROLE_ALIAS") {
         Ok(value) => role_alias = value,
         Err(_e) => (),
-    }
-
-    match env::var("ROLE_ASSUMED_UNTIL") {
-        Ok(value) => role_assumed_until = value,
-        Err(_e) => process::exit(0),
     }
 
     println!("{} until {}", role_alias, role_expiration_repr(role_assumed_until));
