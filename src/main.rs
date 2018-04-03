@@ -5,13 +5,12 @@ use std::process;
 use chrono::prelude::*;
 
 fn role_expiration_repr(datestamp: String) -> String {
-    let role_expiration;
     let current_time: DateTime<Local> = Local::now();
 
-    match datestamp.parse::<DateTime<Local>>() {
-        Ok(value) => role_expiration = value,
+    let role_expiration = match datestamp.parse::<DateTime<Local>>() {
+        Ok(value) => value,
         Err(_e) => return datestamp,
-    }
+    };
 
     if role_expiration < current_time {
         return String::from("EXPIRED");
@@ -21,18 +20,15 @@ fn role_expiration_repr(datestamp: String) -> String {
 }
 
 fn main() {
-    let mut role_alias;
-    let role_assumed_until;
-
-    match env::var("ROLE_ASSUMED_UNTIL") {
-        Ok(value) => role_assumed_until = value,
+    let role_assumed_until = match env::var("ROLE_ASSUMED_UNTIL") {
+        Ok(value) => value,
         Err(_e) => process::exit(0),
-    }
+    };
 
-    match env::var("ROLE_ASSUMED") {
-        Ok(value) => role_alias = value,
+    let mut role_alias = match env::var("ROLE_ASSUMED") {
+        Ok(value) => value,
         Err(_e) => process::exit(0),
-    }
+    };
 
     match env::var("ROLE_ALIAS") {
         Ok(value) => role_alias = value,
